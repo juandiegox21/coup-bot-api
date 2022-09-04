@@ -35,4 +35,14 @@ model GamePlayer {
 model Card {
   id         Int       @id @default(autoincrement())
   name       String
+  cardCounterActionAttribute CardCounterActionAttribute?
+}
+
+model CardCounterActionAttribute {
+  id         Int       @id @default(autoincrement())
+  card       Card      @relation(fields: [cardId], references: [id])
+  canBlockForeignAid     Boolean   @default(false)
+  canBlockStealing     Boolean   @default(false)
+  canBlockAssassination      Boolean   @default(false)
+  cardId Int @unique
 }
