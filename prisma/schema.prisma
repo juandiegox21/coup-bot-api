@@ -31,3 +31,8 @@ model GamePlayer {
 
   gameId Int
 }
+
+model Card {
+  id         Int       @id @default(autoincrement())
+  name       String
+}
