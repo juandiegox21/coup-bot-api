@@ -35,4 +35,16 @@ model GamePlayer {
 model Card {
   id         Int       @id @default(autoincrement())
   name       String
+  cardActionAttribute CardActionAttribute?
+}
+
+model CardActionAttribute {
+  id         Int       @id @default(autoincrement())
+  card       Card      @relation(fields: [cardId], references: [id])
+  canTax     Boolean   @default(false)
+  canAssassinate     Boolean   @default(false)
+  canExchange     Boolean   @default(false)
+  canSteal      Boolean   @default(false)
+
+  cardId Int @unique
 }
