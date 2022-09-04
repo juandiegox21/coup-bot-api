@@ -33,16 +33,29 @@ model GamePlayer {
 }
 
 model Card {
-  id         Int       @id @default(autoincrement())
-  name       String
+  id                         Int                         @id @default(autoincrement())
+  name                       String
+  cardActionAttribute        CardActionAttribute?
   cardCounterActionAttribute CardCounterActionAttribute?
 }
 
+model CardActionAttribute {
+  id             Int     @id @default(autoincrement())
+  card           Card    @relation(fields: [cardId], references: [id])
+  canTax         Boolean @default(false)
+  canAssassinate Boolean @default(false)
+  canExchange    Boolean @default(false)
+  canSteal       Boolean @default(false)
+
+  cardId Int @unique
+}
+
 model CardCounterActionAttribute {
-  id         Int       @id @default(autoincrement())
-  card       Card      @relation(fields: [cardId], references: [id])
-  canBlockForeignAid     Boolean   @default(false)
-  canBlockStealing     Boolean   @default(false)
-  canBlockAssassination      Boolean   @default(false)
+  id                    Int     @id @default(autoincrement())
+  card                  Card    @relation(fields: [cardId], references: [id])
+  canBlockForeignAid    Boolean @default(false)
+  canBlockStealing      Boolean @default(false)
+  canBlockAssassination Boolean @default(false)
+
   cardId Int @unique
 }
