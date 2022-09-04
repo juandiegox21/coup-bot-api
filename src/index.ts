@@ -17,8 +17,8 @@ app.get('/users', async (req, res) => {
     ];
 
     res.json(users);
-  })
+})
 
 app.listen(3000, () =>
-  console.log('REST API server ready at: http://localhost:3000'),
+    console.log('REST API server ready at: http://localhost:3000'),
 )
