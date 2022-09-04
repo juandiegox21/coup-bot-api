@@ -13,11 +13,12 @@ datasource db {
 // schemas
 
 model Game {
-  id          Int          @id @default(autoincrement())
-  gamePlayer  GamePlayer[]
-  dateCreated DateTime     @default(now())
-  dateStarted DateTime?
-  dateEnded   DateTime?
+  id             Int             @id @default(autoincrement())
+  gamePlayer     GamePlayer[]
+  dateCreated    DateTime        @default(now())
+  dateStarted    DateTime?
+  dateEnded      DateTime?
+  gamePlayerCard GamePlayerCard?
 }
 
 model GamePlayer {
@@ -37,6 +38,7 @@ model Card {
   name                       String
   cardActionAttribute        CardActionAttribute?
   cardCounterActionAttribute CardCounterActionAttribute?
+  gamePlayerCard             GamePlayerCard?
 }
 
 model CardActionAttribute {
@@ -59,3 +61,13 @@ model CardCounterActionAttribute {
 
   cardId Int @unique
 }
+
+model GamePlayerCard {
+  id   Int  @id @default(autoincrement())
+  card Card @relation(fields: [cardId], references: [id])
+  game Game @relation(fields: [gameId], references: [id])
+
+  cardId Int @unique
+  gameId Int @unique
+}
+
