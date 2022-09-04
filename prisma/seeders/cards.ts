@@ -53,7 +53,7 @@ const cardData = () => {
         assassin,
         duke,
         captain,
-    ]
+    ];
 };
 
 export default cardData;
