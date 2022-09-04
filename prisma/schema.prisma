@@ -13,8 +13,21 @@ datasource db {
 // schemas
 
 model Game {
-  id            Int         @default(autoincrement()) @id
-  dateCreated   DateTime    @default(now())
-  dateStarted   DateTime?
-  dateEnded     DateTime?
+  id          Int          @id @default(autoincrement())
+  gamePlayer  GamePlayer[]
+  dateCreated DateTime     @default(now())
+  dateStarted DateTime?
+  dateEnded   DateTime?
+}
+
+model GamePlayer {
+  id         Int       @id @default(autoincrement())
+  game       Game      @relation(fields: [gameId], references: [id])
+  name       String
+  discordId  String
+  coins      Int
+  isWinner   Boolean   @default(false)
+  dateJoined DateTime?
+
+  gameId Int
 }
