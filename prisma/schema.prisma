@@ -10,3 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// schemas
+
+model Game {
+  id            Int         @default(autoincrement()) @id
+  dateCreated   DateTime    @default(now())
+  dateStarted   DateTime?
+  dateEnded     DateTime?
+}
