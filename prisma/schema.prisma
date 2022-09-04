@@ -63,11 +63,11 @@ model CardCounterActionAttribute {
 }
 
 model GamePlayerCard {
-  id   Int  @id @default(autoincrement())
-  card Card @relation(fields: [cardId], references: [id])
-  game Game @relation(fields: [gameId], references: [id])
+  id        Int    @id @default(autoincrement())
+  card      Card   @relation(fields: [cardId], references: [id])
+  game      Game   @relation(fields: [gameId], references: [id])
+  discordId String
 
   cardId Int @unique
   gameId Int @unique
 }
-
