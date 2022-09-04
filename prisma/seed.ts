@@ -1,25 +1,37 @@
 import { PrismaClient } from '@prisma/client'
-import { cards } from "./seeders/index";
+import { cards, game, gamePlayers } from "./seeders/index";
 
 const prisma = new PrismaClient()
 
+const createGame = () => {
+    return prisma.game.create({
+        data: {
+            ...game(),
+            gamePlayer: {
+                create: gamePlayers(6)
+            },
+        }
+    });
+};
 
-const createCards = async () => {
+const createCards = () => {
     const cardsCreated = cards().map(card => {
         return prisma.card.create({
             data: card,
         });
     })
 
-    await Promise.all(cardsCreated);
-
-    console.log(`-- Cards created --.`);
+    return Promise.all(cardsCreated);
 };
 
 async function main() {
     console.log(`Start seeding ...`);
 
-    createCards();
+    await createGame();
+    console.log(`-- Game created with players --.`);
+
+    await createCards();
+    console.log(`-- Cards created --.`);
 
     console.log(`Seeding finished.`);
 }
