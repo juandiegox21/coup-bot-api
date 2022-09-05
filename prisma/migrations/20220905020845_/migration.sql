@@ -52,6 +52,16 @@ CREATE TABLE "CardCounterActionAttribute" (
     CONSTRAINT "CardCounterActionAttribute_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "GamePlayerCard" (
+    "id" SERIAL NOT NULL,
+    "cardId" INTEGER NOT NULL,
+    "gameId" INTEGER NOT NULL,
+    "gamePlayerId" INTEGER NOT NULL,
+
+    CONSTRAINT "GamePlayerCard_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "CardActionAttribute_cardId_key" ON "CardActionAttribute"("cardId");
 
@@ -66,3 +76,12 @@ ALTER TABLE "CardActionAttribute" ADD CONSTRAINT "CardActionAttribute_cardId_fke
 
 -- AddForeignKey
 ALTER TABLE "CardCounterActionAttribute" ADD CONSTRAINT "CardCounterActionAttribute_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GamePlayerCard" ADD CONSTRAINT "GamePlayerCard_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "Card"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GamePlayerCard" ADD CONSTRAINT "GamePlayerCard_gameId_fkey" FOREIGN KEY ("gameId") REFERENCES "Game"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GamePlayerCard" ADD CONSTRAINT "GamePlayerCard_gamePlayerId_fkey" FOREIGN KEY ("gamePlayerId") REFERENCES "GamePlayer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
