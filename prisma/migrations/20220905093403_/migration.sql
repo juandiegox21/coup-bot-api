@@ -2,8 +2,8 @@
 CREATE TABLE "Game" (
     "id" SERIAL NOT NULL,
     "dateCreated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "dateStarted" TIMESTAMP(3),
-    "dateEnded" TIMESTAMP(3),
+    "dateStarted" TEXT,
+    "dateEnded" TEXT,
 
     CONSTRAINT "Game_pkey" PRIMARY KEY ("id")
 );
@@ -58,6 +58,7 @@ CREATE TABLE "GamePlayerCard" (
     "cardId" INTEGER NOT NULL,
     "gameId" INTEGER NOT NULL,
     "gamePlayerId" INTEGER NOT NULL,
+    "isCardRevealed" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "GamePlayerCard_pkey" PRIMARY KEY ("id")
 );

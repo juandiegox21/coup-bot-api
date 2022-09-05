@@ -16,8 +16,8 @@ model Game {
   id             Int              @id @default(autoincrement())
   gamePlayer     GamePlayer[]
   dateCreated    DateTime         @default(now())
-  dateStarted    DateTime?
-  dateEnded      DateTime?
+  dateStarted    String?
+  dateEnded      String?
   gamePlayerCard GamePlayerCard[]
 }
 
