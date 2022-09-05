@@ -55,7 +55,44 @@ const createGamePlayer = async (req: Request, res: Response) => {
     }
 };
 
+const updateGamePlayer = async (req: Request, res: Response) => {
+    try {
+        const gameId: number = parseInt(req.params.gameId);
+        const discordId: string = req.params.discordId;
+
+        const data: GamePlayer = { ...req.body, gameId};
+
+        const updated = await prisma.gamePlayer.updateMany({
+            where: { gameId, discordId },
+            data: data
+        });
+
+        return res.send({ success: (updated.count > 0) });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json(error);
+    }
+};
+
+const deleteGamePlayer = async (req: Request, res: Response) => {
+    try {
+        const gameId: number = parseInt(req.params.gameId);
+        const discordId: string = req.params.discordId;
+
+        const updated = await prisma.gamePlayer.deleteMany({
+            where: { gameId, discordId },
+        });
+
+        return res.send({ success: (updated.count > 0) });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json(error);
+    }
+};
+
 export default {
     getGameActivePlayers,
     createGamePlayer,
+    updateGamePlayer,
+    deleteGamePlayer,
 }
