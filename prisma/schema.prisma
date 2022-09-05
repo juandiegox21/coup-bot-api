@@ -69,7 +69,8 @@ model GamePlayerCard {
   game       Game       @relation(fields: [gameId], references: [id])
   gamePlayer GamePlayer @relation(fields: [gamePlayerId], references: [id])
 
-  cardId       Int
-  gameId       Int
-  gamePlayerId Int
+  cardId         Int
+  gameId         Int
+  gamePlayerId   Int
+  isCardRevealed Boolean @default(false)
 }
