@@ -13,6 +13,9 @@ const IMMUTABLE_NUMBER_OF_CARDS_PER_CHARACTER: NumberOfCardsPerCharacter = {
 };
 
 const MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER = { ...IMMUTABLE_NUMBER_OF_CARDS_PER_CHARACTER };
+
+assignCardsToPlayersWIP();
+
 async function assignCardsToPlayersWIP() {
     const gamePlayers = await prisma.gamePlayer.findMany({
         where: { gameId: 1 },
@@ -46,10 +49,14 @@ async function assignCardsToPlayersWIP() {
 
     await Promise.all(updatePlayersPromises);
 
+    const unassignedRemainingCards = croupier.unassignRemainingCards();
+
+    await prisma.gamePlayerCard.createMany({
+        data: unassignedRemainingCards
+    });
+
     console.log("Cards in deck:");
-
     console.log(MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER);
-
 }
 
 export default assignCardsToPlayersWIP;
