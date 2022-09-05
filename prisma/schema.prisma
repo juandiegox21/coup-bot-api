@@ -13,12 +13,12 @@ datasource db {
 // schemas
 
 model Game {
-  id             Int             @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   gamePlayer     GamePlayer[]
-  dateCreated    DateTime        @default(now())
+  dateCreated    DateTime         @default(now())
   dateStarted    DateTime?
   dateEnded      DateTime?
-  gamePlayerCard GamePlayerCard?
+  gamePlayerCard GamePlayerCard[]
 }
 
 model GamePlayer {
@@ -30,7 +30,8 @@ model GamePlayer {
   isWinner   Boolean   @default(false)
   dateJoined DateTime?
 
-  gameId Int
+  gameId         Int
+  gamePlayerCard GamePlayerCard[]
 }
 
 model Card {
@@ -38,7 +39,7 @@ model Card {
   name                       String
   cardActionAttribute        CardActionAttribute?
   cardCounterActionAttribute CardCounterActionAttribute?
-  gamePlayerCard             GamePlayerCard?
+  GamePlayerCard             GamePlayerCard[]
 }
 
 model CardActionAttribute {
@@ -63,11 +64,12 @@ model CardCounterActionAttribute {
 }
 
 model GamePlayerCard {
-  id        Int    @id @default(autoincrement())
-  card      Card   @relation(fields: [cardId], references: [id])
-  game      Game   @relation(fields: [gameId], references: [id])
-  discordId String
+  id         Int        @id @default(autoincrement())
+  card       Card       @relation(fields: [cardId], references: [id])
+  game       Game       @relation(fields: [gameId], references: [id])
+  gamePlayer GamePlayer @relation(fields: [gamePlayerId], references: [id])
 
-  cardId Int @unique
-  gameId Int @unique
+  cardId       Int
+  gameId       Int
+  gamePlayerId Int
 }
