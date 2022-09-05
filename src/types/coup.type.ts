@@ -15,4 +15,5 @@ export type NumberOfCardsPerCharacter = {
 export type AssignedCards = {
     gameId: number,
     cardId: number,
+    gamePlayerId?: number | null,
 };

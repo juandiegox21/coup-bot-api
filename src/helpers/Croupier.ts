@@ -18,7 +18,7 @@ export class Croupier {
         this.mutableNumberOfCardsPerCharacter = mutableNumberOfCardsPerCharacter;
     }
 
-    assignCard(playerName: string): AssignedCards {
+    assignCard(playerName: string, gamePlayerId?: number | null): AssignedCards {
         const randomCard = this.cards[randomIndexFromArray(this.cards)];
         const key = randomCard.name as keyof NumberOfCardsPerCharacter;
 
@@ -33,6 +33,7 @@ export class Croupier {
         return {
             gameId: this.gameId,
             cardId: randomCard.id,
+            gamePlayerId,
         };
     }
 
@@ -43,6 +44,22 @@ export class Croupier {
         ];
 
         return dealtCardsData;
+    }
+
+    unassignRemainingCards() {
+        const values = Object.values(this.mutableNumberOfCardsPerCharacter);
+
+        const numberOfRemainingCards = values.reduce((accumulator, value) => {
+            return accumulator + value;
+        }, 0);
+
+        const unassignedCardsData = [];
+
+        for (let i = 0; i < numberOfRemainingCards; i++) {
+            unassignedCardsData.push(this.assignCard("UNASSIGNED", null));
+        }
+
+        return unassignedCardsData;
     }
 
     logAssignedCard(playerName: string, cardName: string) {
