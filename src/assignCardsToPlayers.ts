@@ -55,7 +55,7 @@ async function assignCardsToPlayersWIP() {
         data: unassignedRemainingCards
     });
 
-    console.log("Cards in deck:");
+    console.log("CARDS THAT WERE NOT DEALT:");
     console.log(MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER);
 }
 
