@@ -57,7 +57,8 @@ CREATE TABLE "GamePlayerCard" (
     "id" SERIAL NOT NULL,
     "cardId" INTEGER NOT NULL,
     "gameId" INTEGER NOT NULL,
-    "gamePlayerId" INTEGER NOT NULL,
+    "gamePlayerId" INTEGER,
+    "isCardRevealed" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "GamePlayerCard_pkey" PRIMARY KEY ("id")
 );
@@ -84,4 +85,4 @@ ALTER TABLE "GamePlayerCard" ADD CONSTRAINT "GamePlayerCard_cardId_fkey" FOREIGN
 ALTER TABLE "GamePlayerCard" ADD CONSTRAINT "GamePlayerCard_gameId_fkey" FOREIGN KEY ("gameId") REFERENCES "Game"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "GamePlayerCard" ADD CONSTRAINT "GamePlayerCard_gamePlayerId_fkey" FOREIGN KEY ("gamePlayerId") REFERENCES "GamePlayer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "GamePlayerCard" ADD CONSTRAINT "GamePlayerCard_gamePlayerId_fkey" FOREIGN KEY ("gamePlayerId") REFERENCES "GamePlayer"("id") ON DELETE SET NULL ON UPDATE CASCADE;

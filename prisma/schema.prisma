@@ -64,13 +64,13 @@ model CardCounterActionAttribute {
 }
 
 model GamePlayerCard {
-  id         Int        @id @default(autoincrement())
-  card       Card       @relation(fields: [cardId], references: [id])
-  game       Game       @relation(fields: [gameId], references: [id])
-  gamePlayer GamePlayer @relation(fields: [gamePlayerId], references: [id])
+  id         Int         @id @default(autoincrement())
+  card       Card        @relation(fields: [cardId], references: [id])
+  game       Game        @relation(fields: [gameId], references: [id])
+  gamePlayer GamePlayer? @relation(fields: [gamePlayerId], references: [id])
 
   cardId         Int
   gameId         Int
-  gamePlayerId   Int
+  gamePlayerId   Int?
   isCardRevealed Boolean @default(false)
 }
