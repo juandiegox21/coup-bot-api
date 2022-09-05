@@ -15,7 +15,7 @@ CREATE TABLE "GamePlayer" (
     "discordId" TEXT NOT NULL,
     "coins" INTEGER NOT NULL,
     "isWinner" BOOLEAN NOT NULL DEFAULT false,
-    "dateJoined" TIMESTAMP(3),
+    "dateJoined" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "gameId" INTEGER NOT NULL,
 
     CONSTRAINT "GamePlayer_pkey" PRIMARY KEY ("id")
@@ -57,11 +57,7 @@ CREATE TABLE "GamePlayerCard" (
     "id" SERIAL NOT NULL,
     "cardId" INTEGER NOT NULL,
     "gameId" INTEGER NOT NULL,
-<<<<<<< HEAD:prisma/migrations/20220905071809_/migration.sql
     "gamePlayerId" INTEGER,
-=======
-    "gamePlayerId" INTEGER NOT NULL,
->>>>>>> 733be99bf19cda6287612f4a8e16960f8626346e:prisma/migrations/20220905093403_/migration.sql
     "isCardRevealed" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "GamePlayerCard_pkey" PRIMARY KEY ("id")
