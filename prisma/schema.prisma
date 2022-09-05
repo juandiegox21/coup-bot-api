@@ -22,13 +22,13 @@ model Game {
 }
 
 model GamePlayer {
-  id         Int       @id @default(autoincrement())
-  game       Game      @relation(fields: [gameId], references: [id])
+  id         Int      @id @default(autoincrement())
+  game       Game     @relation(fields: [gameId], references: [id])
   name       String
   discordId  String
   coins      Int
-  isWinner   Boolean   @default(false)
-  dateJoined DateTime?
+  isWinner   Boolean  @default(false)
+  dateJoined DateTime @default(now())
 
   gameId         Int
   gamePlayerCard GamePlayerCard[]
