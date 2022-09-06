@@ -14,17 +14,15 @@ const IMMUTABLE_NUMBER_OF_CARDS_PER_CHARACTER: NumberOfCardsPerCharacter = {
 
 const MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER = { ...IMMUTABLE_NUMBER_OF_CARDS_PER_CHARACTER };
 
-assignCardsToPlayersWIP();
+async function assignCardsToPlayers(gameId: number) {
+    let assignedCardsCount = 0;
 
-async function assignCardsToPlayersWIP() {
     const gamePlayers = await prisma.gamePlayer.findMany({
-        where: { gameId: 1 },
+        where: { gameId },
         include: {
             gamePlayerCard: true,
         }
     });
-
-    const gameId = 1;
 
     const cards = await prisma.card.findMany();
 
@@ -32,6 +30,8 @@ async function assignCardsToPlayersWIP() {
 
     const updatePlayersPromises = gamePlayers.map(player => {
         const dealtCards = croupier.dealCards(player.name);
+
+        assignedCardsCount += dealtCards.length;
 
         return prisma.gamePlayer.update({
             where: {
@@ -44,6 +44,9 @@ async function assignCardsToPlayersWIP() {
                     },
                 }
             },
+            include: {
+                gamePlayerCard: true
+            }
         });
     });
 
@@ -51,12 +54,15 @@ async function assignCardsToPlayersWIP() {
 
     const unassignedRemainingCards = croupier.unassignRemainingCards();
 
-    await prisma.gamePlayerCard.createMany({
+    const unassigned = await prisma.gamePlayerCard.createMany({
         data: unassignedRemainingCards
     });
 
-    console.log("CARDS THAT WERE NOT DEALT:");
-    console.log(MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER);
+    return {
+        remaining: MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER,
+        assigned: assignedCardsCount,
+        unassigned: unassigned.count,
+    };
 }
 
-export default assignCardsToPlayersWIP;
+export default assignCardsToPlayers;
