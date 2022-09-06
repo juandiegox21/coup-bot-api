@@ -35,10 +35,24 @@ const getGameActivePlayers = async (req: Request, res: Response) => {
     }
 };
 
+const retrieveGameById = async (gameId: number) => {
+    const game = await prisma.game.findFirstOrThrow({
+        where: { id: gameId}
+    });
+
+    return game;
+};
+
 const createGamePlayer = async (req: Request, res: Response) => {
     try {
         const gameId: number = parseInt(req.params.gameId);
         const discordId: string = req.body.discordId;
+
+        const { dateStarted, dateEnded } = await retrieveGameById(gameId);
+
+        if (dateStarted || dateEnded) {
+            return res.status(400).json({ error: `Cannot join game id: ${gameId}, this game has already started or ended` });
+        }
 
         const hasPlayerJoinedToGame = await playerExistsInGame(gameId, discordId);
 
