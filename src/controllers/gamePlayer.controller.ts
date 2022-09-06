@@ -18,7 +18,14 @@ const getGameActivePlayers = async (req: Request, res: Response) => {
         const gameId: number = parseInt(req.params.gameId);
 
         const gamePlayers = await prisma.gamePlayer.findMany({
-            where: { gameId }
+            where: { gameId },
+            include: {
+                gamePlayerCard: {
+                    include: {
+                        card: true
+                    }
+                }
+            }
         });
 
         return res.send(gamePlayers);

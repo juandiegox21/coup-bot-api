@@ -15,6 +15,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/games', routes.games);
 app.use('/api/v1/games', routes.gamePlayer);
+app.use('/api/v1/games', routes.gamePlayerCard);
 
 app.listen(3000, () =>
     console.log('REST API server ready at: http://localhost:3000'),
