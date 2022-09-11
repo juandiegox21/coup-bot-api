@@ -59,19 +59,19 @@ const createGamePlayer = async (req: Request, res: Response) => {
         const { dateStarted, dateEnded } = await retrieveGameById(gameId);
 
         if (dateStarted || dateEnded) {
-            return res.status(400).json({ error: `Cannot join game id: ${gameId}, this game has already started or ended` });
+            return res.status(422).json({ error: `Cannot join game id: ${gameId}, this game has already started or ended` });
         }
 
         const gamePlayersCount = await retrieveNumberOfGamePlayers(gameId);
 
         if (gamePlayersCount >= 6) {
-            return res.status(400).json({ error: `You can't join this game, it's full (maximum 6 players)` });
+            return res.status(422).json({ error: `You can't join this game, it's full (maximum 6 players)` });
         }
 
         const hasPlayerJoinedToGame = await playerExistsInGame(gameId, discordId);
 
         if (hasPlayerJoinedToGame) {
-            return res.status(400).json({ error: `This player has already joined Game ID ${gameId}` });
+            return res.status(422).json({ error: `This player has already joined Game ID ${gameId}` });
         }
 
         const data: GamePlayer = { ...req.body, gameId };
