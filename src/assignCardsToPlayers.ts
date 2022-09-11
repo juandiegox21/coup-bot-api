@@ -12,9 +12,9 @@ const IMMUTABLE_NUMBER_OF_CARDS_PER_CHARACTER: NumberOfCardsPerCharacter = {
     Captain: 3,
 };
 
-const MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER = { ...IMMUTABLE_NUMBER_OF_CARDS_PER_CHARACTER };
-
 async function assignCardsToPlayers(gameId: number) {
+    const MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER = { ...IMMUTABLE_NUMBER_OF_CARDS_PER_CHARACTER };
+
     let assignedCardsCount = 0;
 
     const gamePlayers = await prisma.gamePlayer.findMany({
