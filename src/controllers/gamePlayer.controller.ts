@@ -71,7 +71,7 @@ const createGamePlayer = async (req: Request, res: Response) => {
         const hasPlayerJoinedToGame = await playerExistsInGame(gameId, discordId);
 
         if (hasPlayerJoinedToGame) {
-            return res.status(422).json({ error: `This player has already joined Game ID ${gameId}` });
+            return res.status(422).json({ error: `You have already joined Game ID ${gameId}` });
         }
 
         const data: GamePlayer = { ...req.body, gameId };
