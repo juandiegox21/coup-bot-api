@@ -29,6 +29,14 @@ const retrieveNumberOfGamePlayers = async (gameId: number) => {
     return game;
 };
 
+const getGamePlayerIdByDiscordId = async (gameId: number, discordId: string) => {
+    const gamePlayer = await prisma.gamePlayer.findFirst({
+        where: { gameId, discordId }
+    });
+
+    return gamePlayer?.id;
+};
+
 const getGameActivePlayers = async (req: Request, res: Response) => {
     try {
         const gameId: number = parseInt(req.params.gameId);
@@ -71,7 +79,7 @@ const createGamePlayer = async (req: Request, res: Response) => {
         const gamePlayersCount = await retrieveNumberOfGamePlayers(gameId);
 
         if (gamePlayersCount >= 6) {
-            return res.status(422).json({ error: `You can't join this game, it's full (maximum 6 players)` });
+            return res.status(422).json({ error: "You can't join this game, it's full (maximum 6 players)" });
         }
 
         const data: GamePlayer = { ...req.body, gameId };
@@ -97,12 +105,18 @@ const updateGamePlayer = async (req: Request, res: Response) => {
 
         const data: GamePlayer = { ...req.body, gameId };
 
-        const updated = await prisma.gamePlayer.updateMany({
-            where: { gameId, discordId },
+        const gamePlayerId = await getGamePlayerIdByDiscordId(gameId, discordId);
+
+        if (!gamePlayerId) {
+            return res.status(422).json({ error: `Could not update player id ${gamePlayerId}.` });
+        }
+
+        const updated = await prisma.gamePlayer.update({
+            where: { id: gamePlayerId },
             data: data
         });
 
-        return res.send({ success: (updated.count > 0) });
+        return res.send(updated);
     } catch (error) {
         console.log('error', error);
         res.status(500).json(error);
@@ -114,11 +128,17 @@ const deleteGamePlayer = async (req: Request, res: Response) => {
         const gameId: number = parseInt(req.params.gameId);
         const discordId: string = req.params.discordId;
 
-        const updated = await prisma.gamePlayer.deleteMany({
-            where: { gameId, discordId },
+        const gamePlayerId = await getGamePlayerIdByDiscordId(gameId, discordId);
+
+        if (!gamePlayerId) {
+            return res.status(422).json({ error: "You are not in an active game." });
+        }
+
+        await prisma.gamePlayer.delete({
+            where: { id: gamePlayerId },
         });
 
-        return res.send({ success: (updated.count > 0) });
+        return res.send({ success: true });
     } catch (error) {
         console.log('error', error);
         res.status(500).json(error);
