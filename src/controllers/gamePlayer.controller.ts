@@ -13,6 +13,22 @@ const playerExistsInGame = async (gameId: number, discordId: string) => {
     return gamePlayer > 0;
 };
 
+const retrieveGameById = async (gameId: number) => {
+    const game = await prisma.game.findFirstOrThrow({
+        where: { id: gameId }
+    });
+
+    return game;
+};
+
+const retrieveNumberOfGamePlayers = async (gameId: number) => {
+    const game = await prisma.gamePlayer.count({
+        where: { gameId }
+    });
+
+    return game;
+};
+
 const getGameActivePlayers = async (req: Request, res: Response) => {
     try {
         const gameId: number = parseInt(req.params.gameId);
@@ -35,14 +51,6 @@ const getGameActivePlayers = async (req: Request, res: Response) => {
     }
 };
 
-const retrieveGameById = async (gameId: number) => {
-    const game = await prisma.game.findFirstOrThrow({
-        where: { id: gameId}
-    });
-
-    return game;
-};
-
 const createGamePlayer = async (req: Request, res: Response) => {
     try {
         const gameId: number = parseInt(req.params.gameId);
@@ -54,13 +62,19 @@ const createGamePlayer = async (req: Request, res: Response) => {
             return res.status(400).json({ error: `Cannot join game id: ${gameId}, this game has already started or ended` });
         }
 
+        const gamePlayersCount = await retrieveNumberOfGamePlayers(gameId);
+
+        if (gamePlayersCount >= 6) {
+            return res.status(400).json({ error: `You can't join this game, it's full (maximum 6 players)` });
+        }
+
         const hasPlayerJoinedToGame = await playerExistsInGame(gameId, discordId);
 
         if (hasPlayerJoinedToGame) {
             return res.status(400).json({ error: `This player has already joined Game ID ${gameId}` });
         }
 
-        const data: GamePlayer = { ...req.body, gameId};
+        const data: GamePlayer = { ...req.body, gameId };
 
         const gamePlayer = await prisma.gamePlayer.create({
             data
@@ -81,7 +95,7 @@ const updateGamePlayer = async (req: Request, res: Response) => {
         const gameId: number = parseInt(req.params.gameId);
         const discordId: string = req.params.discordId;
 
-        const data: GamePlayer = { ...req.body, gameId};
+        const data: GamePlayer = { ...req.body, gameId };
 
         const updated = await prisma.gamePlayer.updateMany({
             where: { gameId, discordId },

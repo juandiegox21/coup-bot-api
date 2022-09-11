@@ -15,12 +15,28 @@ const latestUnfinishedGameCreated = async () => {
     return game;
 };
 
+const retrieveGameById = async (gameId: number) => {
+    const game = await prisma.game.findFirstOrThrow({
+        where: { id: gameId }
+    });
+
+    return game;
+};
+
+const retrieveNumberOfGamePlayers = async (gameId: number) => {
+    const game = await prisma.gamePlayer.count({
+        where: { gameId }
+    });
+
+    return game;
+};
+
 const getActiveGames = async (req: Request, res: Response) => {
     try {
         const latestUnfinishedGame = await latestUnfinishedGameCreated();
 
         if (!latestUnfinishedGame) {
-            return res.status(400).json({error: 'There are no games active'});
+            return res.status(400).json({ error: 'There are no games active' });
         }
 
         return res.send(latestUnfinishedGame);
@@ -48,8 +64,8 @@ const createGame = async (req: Request, res: Response) => {
     try {
         const latestUnfinishedGame = await latestUnfinishedGameCreated();
 
-        if(latestUnfinishedGame) {
-            return res.status(422).json({error: `A game with id ${latestUnfinishedGame.id} has not been finished, please delete it before creating a new game`});
+        if (latestUnfinishedGame) {
+            return res.status(422).json({ error: `A game with id ${latestUnfinishedGame.id} has not been finished, please delete it before creating a new game` });
         }
 
         const game = await prisma.game.create({
@@ -105,39 +121,23 @@ const deleteGame = async (req: Request, res: Response) => {
     }
 };
 
-const retrieveGameById = async (gameId: number) => {
-    const game = await prisma.game.findFirstOrThrow({
-        where: { id: gameId}
-    });
-
-    return game;
-};
-
-const retrieveGamePlayers = async (gameId: number) => {
-    const game = await prisma.gamePlayer.count({
-        where: { gameId }
-    });
-
-    return game;
-};
-
 const startGame = async (req: Request, res: Response) => {
     try {
         const gameId: number = parseInt(req.params.gameId);
         const { dateStarted, dateEnded } = await retrieveGameById(gameId);
 
         if (dateEnded) {
-            return res.status(400).json({ error: "This game has ended"});
+            return res.status(400).json({ error: "This game has ended" });
         }
 
         if (dateStarted) {
-            return res.status(400).json({ error: "This game has already started"});
+            return res.status(400).json({ error: "This game has already started" });
         }
 
-        const gamePlayersCount = await retrieveGamePlayers(gameId);
+        const gamePlayersCount = await retrieveNumberOfGamePlayers(gameId);
 
         if (gamePlayersCount < 2) {
-            return res.status(400).json({ error: `Not enough players to start a game (minimum 2), there are only ${gamePlayersCount} player(s) in this game`});
+            return res.status(400).json({ error: `Not enough players to start a game (minimum 2), there are only ${gamePlayersCount} player(s) in this game` });
         }
 
         const response = await assignCardsToPlayers(gameId);
