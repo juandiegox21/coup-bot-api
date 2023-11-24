@@ -16,4 +16,6 @@ export type AssignedCards = {
     gameId: number,
     cardId: number,
     gamePlayerId?: number | null,
+    isCardRevealed?: boolean,
+    gamePlayerDiscordId?: string | null,
 };

@@ -1,7 +1,9 @@
 import express from 'express'
 import routes from './routes';
+import 'dotenv/config';
 
 const app = express();
+const port = process.env.APP_PORT;
 
 app.use(express.json());
 
@@ -17,6 +19,6 @@ app.use('/api/v1/games', routes.games);
 app.use('/api/v1/games', routes.gamePlayer);
 app.use('/api/v1/games', routes.gamePlayerCard);
 
-app.listen(3000, () =>
-    console.log('REST API server ready at: http://localhost:3000'),
+app.listen(port, () =>
+    console.log(`REST API server ready at: http://localhost:${port}`),
 )

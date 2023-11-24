@@ -105,6 +105,14 @@ const deleteGame = async (req: Request, res: Response) => {
     const gameId: number = parseInt(req.params.gameId);
 
     try {
+        await prisma.gamePlayerCard.deleteMany({
+            where: { gameId }
+        });
+
+        await prisma.gamePlayer.deleteMany({
+            where: { gameId }
+        });
+
         await prisma.game.delete({
             where: { id: gameId }
         })
@@ -136,7 +144,7 @@ const startGame = async (req: Request, res: Response) => {
 
         const gamePlayersCount = await retrieveNumberOfGamePlayers(gameId);
 
-        if (gamePlayersCount < 2) {
+        if (gamePlayersCount < 1) {
             return res.status(422).json({ error: `Not enough players to start a game (minimum 2), there are only ${gamePlayersCount} player(s) in this game` });
         }
 
@@ -155,6 +163,49 @@ const startGame = async (req: Request, res: Response) => {
     }
 };
 
+const softDeleteGame = async (req: Request, res: Response) => {
+    const gameId: number = parseInt(req.params.gameId);
+
+    try {
+        await prisma.gamePlayerCard.deleteMany({
+            where: { gameId }
+        });
+
+        await prisma.game.update({
+            where: { id: gameId },
+            data: {
+                dateEnded: moment(new Date()).utc().format('YYYY-MM-DD H:mm:ss')
+            }
+        });
+
+        res.send({
+            success: true
+        });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            const message: string = error.message.trim();
+
+            res.status(422).json({ error: message });
+        }
+    }
+};
+
+const getCardAttributes = async (req: Request, res: Response) => {
+    try {
+        const cards = await prisma.card.findMany({
+            include: {
+                cardActionAttribute: true,
+                cardCounterActionAttribute: true,
+            }
+        });
+
+        return res.send(cards);
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json(error);
+    }
+};
+
 export default {
     getActiveGames,
     getGame,
@@ -162,4 +213,6 @@ export default {
     updateGame,
     deleteGame,
     startGame,
+    softDeleteGame,
+    getCardAttributes
 }

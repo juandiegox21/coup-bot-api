@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { NumberOfCardsPerCharacter } from "./types/coup.type";
+import { AssignedCards, NumberOfCardsPerCharacter } from "./types/coup.type";
 import Croupier from './helpers/Croupier';
 
 const prisma = new PrismaClient();
@@ -15,7 +15,7 @@ const IMMUTABLE_NUMBER_OF_CARDS_PER_CHARACTER: NumberOfCardsPerCharacter = {
 async function assignCardsToPlayers(gameId: number) {
     const MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER = { ...IMMUTABLE_NUMBER_OF_CARDS_PER_CHARACTER };
 
-    let assignedCardsCount = 0;
+    const assignedCards: Array<AssignedCards> = [];
 
     const gamePlayers = await prisma.gamePlayer.findMany({
         where: { gameId },
@@ -31,7 +31,13 @@ async function assignCardsToPlayers(gameId: number) {
     const updatePlayersPromises = gamePlayers.map(player => {
         const dealtCards = croupier.dealCards(player.name);
 
-        assignedCardsCount += dealtCards.length;
+        assignedCards.push(
+            ...dealtCards.map(card => ({
+                ...card, 
+                playerId: player.id,
+                gamePlayerDiscordId: player.discordId,
+            }))
+        );
 
         return prisma.gamePlayer.update({
             where: {
@@ -54,14 +60,13 @@ async function assignCardsToPlayers(gameId: number) {
 
     const unassignedRemainingCards = croupier.unassignRemainingCards();
 
-    const unassigned = await prisma.gamePlayerCard.createMany({
+    await prisma.gamePlayerCard.createMany({
         data: unassignedRemainingCards
     });
 
     return {
-        remaining: MUTABLE_NUMBER_OF_CARDS_PER_CHARACTER,
-        assigned: assignedCardsCount,
-        unassigned: unassigned.count,
+        assigned: assignedCards,
+        unassigned: unassignedRemainingCards,
     };
 }
 
